@@ -33,7 +33,7 @@ class tableType:
         and whether the table is being used or not.
     """
     reservation: reservationType
-    maximumNumberOfPeopleWhoCanSitInThem: int = 0
+    maximumNumberOfPeopleWhoCanSitInThem: int = 10 # altered from the original C++ coce for simplicity's sake
     numberOfPeopleCurrentlySittingAtTheTable: int = 0
     tableNumber: int = 0
     tableUsage: bool = False
@@ -48,7 +48,7 @@ def welcome_screen(reservations: reservationType, tables: tableType) -> None:
     welcome_screen_gui = tk.Tk()
     
     # create title for window
-    welcome_screen_gui.title("Welcome to Messijoes")
+    welcome_screen_gui.title("Welcome Screen")
     
     # set window size in pixels
     welcome_screen_gui.geometry("720x720")
@@ -57,8 +57,8 @@ def welcome_screen(reservations: reservationType, tables: tableType) -> None:
     welcome_screen_gui.resizable(0,0)
     
     # sets the title for the welcome screen 
-    title_label = ttk.Label(welcome_screen_gui, text='Welcome to Messijoes', font=("Times New Roman", 32))
-    title_label.grid(row = 0, column = 3)
+    welcome_screen_title_label = ttk.Label(welcome_screen_gui, text='Welcome to Messijoes', font=("Times New Roman", 32))
+    welcome_screen_title_label.grid(row = 0, column = 3)
     
     # sets up the stock image of an open sign in the welcome screen
     """ Note: tkinter doesn't support .jpg images! Use .png images instead or
@@ -76,20 +76,130 @@ def welcome_screen(reservations: reservationType, tables: tableType) -> None:
     make_reservation_button.grid(row=1, column=0)
     check_in_reservation_button = ttk.Button(welcome_screen_gui, text="Check-In Reservation", command=lambda: check_in_reservation(reservations, tables))
     check_in_reservation_button.grid(row=1, column=5)
+    
     # begin welcome screen
     welcome_screen_gui.mainloop()
-        
+    
+    return 
 
 def make_reservation(reservations: reservationType, tables: tableType) -> None:
-    pass
+    """ make_reservation is the first in a series of functions for the Make Reservation choice 
+        on the Welcome Screen Menu. The user enters a name for the reservation, enters the number
+        of people in the party (which is input verified) and enters the time for the reservation in
+        HH::MM AM/PM. After that, the user clicks Next to go to the confirm_reservation function/page.
 
+    Args:
+        reservations (reservationType): A list of reservationType
+        tables (tableType): A list of tableType
+    """
+    
+    # make name input box variable 
+    name_string = tk.StringVar()
+    
+    # make number of people input box variable
+    number_of_people_in_the_party_integer = tk.IntVar()
+    
+    # make time input box variable
+    time_for_the_reservation_string = tk.StringVar()
+    
+    # initialize window
+    make_reservation_gui = tk.Tk()
+    
+    # Add title for window
+    make_reservation_gui.title("Make Reservation Screen")
+    
+    # set window size in pixels
+    make_reservation_gui.geometry("720x720")
+    
+    # prevents you from resizing the make reservation screen
+    make_reservation_gui.resizable(0,0)
+    
+    # sets the title for the make reservation screen
+    make_reservation_title_label = ttk.Label(make_reservation_gui, text='Make Reservation', font=("Times New Roman", 32))
+    make_reservation_title_label.grid(row = 0, column = 0)
+
+    # make a label so that the user knows to enter their name in the associated input box
+    make_reservation_name_label = ttk.Label(make_reservation_gui, text='Enter a name for the reservation:', font=("Times New Roman", 12))
+    make_reservation_name_label.grid(row = 1, column = 0)
+    
+    # make the name input box
+    make_reservation_name_input_window = tk.Frame(make_reservation_gui, width=100, height=50, bd=0, highlightbackground="black", highlightcolor="black", highlightthickness=2)
+    make_reservation_name_input_window.grid(row = 1, column = 1)
+    
+    make_reservation_name_input_field = tk.Entry(make_reservation_name_input_window, font=('times new roman', 12, 'bold'), textvariable=name_string, width=50, bg="#eee", bd=2, justify='left')
+    make_reservation_name_input_field.pack() # You need to use the pack function here in order for the input field to work
+    make_reservation_name_input_field.focus_set()
+    
+    # make number of people in the party label for the user's sake
+    make_reservation_number_of_people_in_the_party_label = ttk.Label(make_reservation_gui, text='Enter the number of people in the party (must be between 1 and 10 people) in numerical form:', font=("Times New Roman", 12))
+    make_reservation_number_of_people_in_the_party_label.grid(row = 3, column = 0)
+    
+    # make the number of people in the party input box
+    make_reservation_number_of_people_in_the_party_input_window = tk.Frame(make_reservation_gui, width=100, height=50, bd=0, highlightbackground="black", highlightcolor="black", highlightthickness=2)
+    make_reservation_number_of_people_in_the_party_input_window.grid(row = 3, column = 1)
+    
+    make_reservation_number_of_people_in_the_party_input_field = tk.Entry(make_reservation_number_of_people_in_the_party_input_window, font=('times new roman', 12, 'bold'), textvariable=number_of_people_in_the_party_integer, width=50, bg="#eee", bd=2, justify='left')
+    make_reservation_number_of_people_in_the_party_input_field.pack()
+    
+    # make time label for the user's sake
+    make_reservation_time_label = ttk.Label(make_reservation_gui, text='Enter the time for the reservation in HH::MM AM/PM:', font=("Times New Roman", 12)) 
+    make_reservation_time_label.grid(row = 5, column = 0)
+    
+    # make time input box
+    make_reservation_time_input_window = tk.Frame(make_reservation_gui, width=400, height=50, bd=0, highlightbackground="black", highlightcolor="black", highlightthickness=2)
+    make_reservation_time_input_window.grid(row = 5, column = 1)
+    
+    make_reservation_time_input_field = tk.Entry(make_reservation_time_input_window, font=('times new roman', 12, 'bold'), textvariable=time_for_the_reservation_string, width=50, bg="#eee", bd=2, justify='left')
+    make_reservation_time_input_field.pack()
+    
+    # make button to verify contents of make_reservation_number_of_people_in_the_party_input_field and to go to Confirm Reservation Screen
+    make_reservation_next_button = ttk.Button(make_reservation_gui, text="Next", command=lambda: verify_number_of_people_in_the_party_input_field_in_make_reservation(reservations, tables, number_of_people_in_the_party_integer))
+    make_reservation_next_button.grid(row = 7, column = 0)
+    # begin make reservation screen
+    make_reservation_gui.mainloop()
+    
+    return
+
+def confirm_reservation(reservations: reservationType, tables: tableType) -> None:
+    pass
+    
 def check_in_reservation(reservations: reservationType, tables: tableType) -> None:
     pass 
 
+def verify_number_of_people_in_the_party_input_field_in_make_reservation(reservations: reservationType, tables: tableType, number_of_people_in_the_party_integer: tk.IntVar) -> None:
+    """ This function verifies that the number of people in the party input field in make reseration 
+        has a number between 1 and 10 in it. It raises an error message if text or a float number
+        was entered into the field, and another error message if a number was entered into the field 
+        but it was not between 1 and 10. If neither of those cases are true, then it opens up the 
+        Confirm Reservation Window.
+    """
+    # todo: get error message to actually show up
+    if number_of_people_in_the_party_integer != tk.IntVar:
+        error_message_gui = tk.Tk()
+        error_message_gui.geometry("500x500")
+        error_message_string = tk.StringVar()
+        error_message_string.set("Enter the number in numerical form for the number of people in the party, not as words.")
+        error_message_label = tk.Message(error_message_gui, textvariable=error_message_string)
+        error_message_label.pack()
+        error_message_gui.mainloop()
+    elif number_of_people_in_the_party_integer < 1 or number_of_people_in_the_party_integer > 10:
+        error_message_gui = tk.Tk()
+        error_message_gui.geometry("500x500")
+        error_message_string = tk.StringVar()
+        error_message_string.set("The number of people in the party must be greater than 0 and less than 10.")
+        error_message_label = tk.Message(error_message_gui, textvariable=error_message_string)
+        error_message_label.pack()
+        error_message_gui.mainloop()
+    else:
+        confirm_reservation(reservations, tables)
+        
+        return 
 """ We intitalize the two main lists of dataclasses here, reservations for the list of 
     reservation dataclasses, and tables for the list of table dataclasses. 
     Then we begin the welcome_screen function for the user.
 """
+
+# todo: set up dataclass objects within the lists
 reservations: reservationType = []
 tables: tableType = [] 
 
