@@ -12,6 +12,8 @@ from PIL import ImageTk, Image # with the default tkinter Photolabel having erro
 from dataclasses import dataclass # the dataclasses are used to replace the structs in the original
                                   # C++ code
 
+# count number of reservations 
+reservationCount: int = 0
 
 @dataclass
 class reservationType:
@@ -71,10 +73,12 @@ def welcome_screen(reservations: list[reservationType], tables: list[tableType])
     """ Note: Do not use grid and pack methods with objects that have the same parent in tkinter! 
         It will create an error! Use either all grid or all pack.
     """
-    make_reservation_button = ttk.Button(welcome_screen_gui, text="Make Reservation", command=lambda: make_reservation(tables, reservations) or welcome_screen_gui.quit())
+    make_reservation_button = ttk.Button(welcome_screen_gui, text="Make Reservation", command=lambda: make_reservation(reservations, tables))
     make_reservation_button.grid(row=1, column=0)
-    check_in_reservation_button = ttk.Button(welcome_screen_gui, text="Check-In Reservation", command=lambda: check_in_reservation(tables, reservations) or welcome_screen_gui.quit())
+    check_in_reservation_button = ttk.Button(welcome_screen_gui, text="Check-In Reservation", command=lambda: check_in_reservation(reservations, tables))
     check_in_reservation_button.grid(row=1, column=5)
+    
+    # todo: make exit button, since the program won't shut down on it's own even after you close all the visible windows due to the withdrawn root window
     
     # begin welcome screen
     welcome_screen_gui.mainloop()
@@ -280,8 +284,11 @@ def confirm_reservation_yes_option(new_reservation: reservationType, reservation
         tables (tableType): the list of tables avalible for the customer
     """
     
-    # add new_reseration at the end of the reservations list
+    global reservationCount
+    
+    # add new_reseration at the end of the reservations list and add 1 to reservation count
     reservations.append(new_reservation)
+    reservationCount += 1
     
     # return to welcome screen with reservation added to reservations list
     welcome_screen(reservations, tables)
@@ -301,7 +308,43 @@ def confirm_reservation_no_option(reservations: list[reservationType], tables: l
     
     return 
 def check_in_reservation(reservations: list[reservationType], tables: list[tableType]) -> None:
-    pass 
+    # initialize Check-In Reservation Screen
+    check_in_reservation_gui = tk.Toplevel()
+    check_in_reservation_gui.title("Check-In Reservation Screen")
+    check_in_reservation_gui.geometry("720x720")
+    check_in_reservation_gui.resizable(0,0)
+    
+    # Title label for Check-In Reservation Screen
+    check_in_reservation_title_label = ttk.Label(check_in_reservation_gui, text='Check-In Reservation', font=("Times New Roman", 32))
+    check_in_reservation_title_label.grid(row = 0, column = 0)
+    
+    # Check-In Reservation Screen choose the reservation to check-in label
+    check_in_reservation_choose_the_reservation_to_check_in_label = ttk.Label(check_in_reservation_gui, text='Choose the reservation to check-in:', font=("Times New Roman", 12))
+    check_in_reservation_choose_the_reservation_to_check_in_label.grid(row = 1, column = 0)
+    
+   
+    
+    # Initialize Check-In Reservation Screen reservation choice variable
+    check_in_reservation_reservation_choice_variable = tk.StringVar(check_in_reservation_gui)
+    
+    # initialize reservation count global variable
+    global reservationCount
+    
+    # create check-in reservation reservation options list
+    check_in_reservation_reservation_options = []
+    
+    # basically, if the reservation isn't checked-in, append the customer name to the reservation options list
+    for i in reservations:
+        if i.checkInReservation == False: 
+            check_in_reservation_reservation_options.append(i.customerName)
+    
+    # initialize drop down menu
+    check_in_reservation_reservation_choice_drop_down_menu_option_menu = tk.OptionMenu(check_in_reservation_gui, check_in_reservation_reservation_choice_variable, "Options selectable are:", *check_in_reservation_reservation_options)
+    check_in_reservation_reservation_choice_drop_down_menu_option_menu.grid(row = 2, column = 0)
+    
+    # initialize infinite loop that keeps Check-In Reservation Screen on
+    check_in_reservation_gui.mainloop()
+    return
 
 # main function 
 if __name__ == "__main__": 
