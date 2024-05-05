@@ -12,8 +12,6 @@ from PIL import ImageTk, Image # with the default tkinter Photolabel having erro
 from dataclasses import dataclass # the dataclasses are used to replace the structs in the original
                                   # C++ code
 
-# count number of reservations 
-reservationCount: int = 0
 
 @dataclass
 class reservationType:
@@ -284,11 +282,9 @@ def confirm_reservation_yes_option(new_reservation: reservationType, reservation
         tables (tableType): the list of tables avalible for the customer
     """
     
-    global reservationCount
     
-    # add new_reseration at the end of the reservations list and add 1 to reservation count
+    # add new_reseration at the end of the reservations list
     reservations.append(new_reservation)
-    reservationCount += 1
     
     # return to welcome screen with reservation added to reservations list
     welcome_screen(reservations, tables)
@@ -326,10 +322,7 @@ def check_in_reservation(reservations: list[reservationType], tables: list[table
     
     # Initialize Check-In Reservation Screen reservation choice variable
     check_in_reservation_reservation_choice_variable = tk.StringVar(check_in_reservation_gui)
-    
-    # initialize reservation count global variable
-    global reservationCount
-    
+     
     # create check-in reservation reservation options list
     check_in_reservation_reservation_options = []
     
@@ -342,11 +335,84 @@ def check_in_reservation(reservations: list[reservationType], tables: list[table
     check_in_reservation_reservation_choice_drop_down_menu_option_menu = tk.OptionMenu(check_in_reservation_gui, check_in_reservation_reservation_choice_variable, "Options selectable are:", *check_in_reservation_reservation_options)
     check_in_reservation_reservation_choice_drop_down_menu_option_menu.grid(row = 2, column = 0)
     
+    # make check-in reservation next button
+    check_in_reservation_next_button = tk.Button(check_in_reservation_gui, text = "Next", command=lambda: check_in_reservation_next_button_command(reservations, tables, check_in_reservation_reservation_choice_variable.get()))
+    check_in_reservation_next_button.grid(row = 3, column = 1)
+    
     # initialize infinite loop that keeps Check-In Reservation Screen on
     check_in_reservation_gui.mainloop()
     return
 
-# main function 
+def check_in_reservation_next_button_command(reservations: list[reservationType], tables: list[tableType], selected_option: str) -> None:
+    # initialize selected_reservation variable
+    selected_reservation: reservationType = reservationType("", "", 0, False)
+    
+    # basically, if the reservation isn't checked-in, append the customer name to the reservation options list
+    for j in reservations:
+        if j.checkInReservation == False and j.customerName == selected_option: 
+            selected_reservation = j
+            check_in_reservation_assign_reservation_to_table_screen(reservations, tables, selected_reservation)
+
+def check_in_reservation_assign_reservation_to_table_screen(reservations: list[reservationType], tables: list[tableType], selected_reservation: reservationType) -> None:
+    # initialize Check-In Reservation Assign Reservation to Table Screen
+    check_in_reservation_assign_reservation_to_table_screen_gui = tk.Toplevel()
+    check_in_reservation_assign_reservation_to_table_screen_gui.title("Check-In Reservation Assign Reservation to Table Screen")
+    check_in_reservation_assign_reservation_to_table_screen_gui.geometry("720x720")
+    check_in_reservation_assign_reservation_to_table_screen_gui.resizable(0,0)
+    
+    # Title label for Check-In Reservation Assign Reservation to Table Screen
+    check_in_reservation_assign_reservation_to_table_screen_title_label = ttk.Label(check_in_reservation_assign_reservation_to_table_screen_gui, text='Assign Reservation to Table Screen', font=("Times New Roman", 32))
+    check_in_reservation_assign_reservation_to_table_screen_title_label.grid(row = 0, column = 0)
+    
+    # Check-In Reservation Assign Reservation to Table Screen Please assign a table to the reservation label
+    check_in_reservation_assign_reservation_to_table_screen_please_assign_a_table_to_the_reservation_label = ttk.Label(check_in_reservation_assign_reservation_to_table_screen_gui, text='Please assign a table to the reservation:', font=("Times New Roman", 12))
+    check_in_reservation_assign_reservation_to_table_screen_please_assign_a_table_to_the_reservation_label.grid(row = 1, column = 0)
+    
+    # Initialize Check-In Reservation Screen Assign Reservation to Table Screen Table Choice variable
+    check_in_reservation_assign_reservation_to_table_screen_table_choice_variable = tk.StringVar(check_in_reservation_assign_reservation_to_table_screen_gui)
+    
+    # create check-in reservation assign reservation to table screen table options list
+    check_in_reservation_assign_reservation_to_table_screen_table_options = []
+    
+    # basically, if there are no reservation checked-in to the table, append the table number to the table options list
+    for k in tables:
+        if k.reservation.checkInReservation == False: 
+            check_in_reservation_assign_reservation_to_table_screen_table_options.append(str(k.tableNumber))
+    
+    # initialize drop down menu
+    check_in_reservation_table_choice_drop_down_menu_option_menu = tk.OptionMenu(check_in_reservation_assign_reservation_to_table_screen_gui, check_in_reservation_assign_reservation_to_table_screen_table_choice_variable, "Options selectable are:", *check_in_reservation_assign_reservation_to_table_screen_table_options)
+    check_in_reservation_table_choice_drop_down_menu_option_menu.grid(row = 2, column = 0)
+    
+    # make check-in reservation assign reservation to table screen next button
+    check_in_reservation_assign_reservation_to_table_screen_next_button = tk.Button(check_in_reservation_assign_reservation_to_table_screen_gui, text = "Next", command=lambda: check_in_reservation_assign_reservation_to_table_screen_next_button_command(reservations, tables, selected_reservation, int(check_in_reservation_assign_reservation_to_table_screen_table_choice_variable.get())))
+    check_in_reservation_assign_reservation_to_table_screen_next_button.grid(row = 3, column = 1)
+    
+    # open and resize photo2
+    resize_photo2 = Image.open("./Restaurant_Table_For_Check_In_Reservation_Assign_Reservation_to_Table_Screen.png").resize(480,480)
+    
+     # create photo 2 for Check-In Reservation Assign Reservation to Title screen
+    photo2 = ImageTk.PhotoImage(file=resize_photo2) # using ImageTK just in case
+    photo2_label = ttk.Label(check_in_reservation_assign_reservation_to_table_screen_gui, image=photo2, padding=5)
+    photo2_label.grid(row = 4, column = 0)
+    
+    # initialize infinite loop that keeps Check-In Reservation Assign Reservation to Table Screen on
+    check_in_reservation_assign_reservation_to_table_screen_gui.mainloop()
+    return
+
+def check_in_reservation_assign_reservation_to_table_screen_next_button_command(reservations: list[reservationType], tables: list[tableType], selected_reservation: reservationType, table_choice: int) -> None:
+    """ basically, if table number equals table choice, copy over the information from selected reservation to that 
+        table's reservation except for ensuring that that table's checkInReservation variable is true.
+    """
+    for l in tables:
+        if l.tableNumber == table_choice: 
+            l.reservation.checkInReservation = True
+            l.reservation.customerName = selected_reservation.customerName
+            l.reservation.time = selected_reservation.time
+            l.reservation.numberOfPeople = selected_reservation.numberOfPeople 
+            welcome_screen(reservations, tables)
+
+    return 
+# main part of code, initializes the memory and program
 if __name__ == "__main__": 
     
     """ We intitalize the two main lists of dataclasses here, reservations for the list of 
