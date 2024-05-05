@@ -387,12 +387,14 @@ def check_in_reservation_assign_reservation_to_table_screen(reservations: list[r
     check_in_reservation_assign_reservation_to_table_screen_next_button = tk.Button(check_in_reservation_assign_reservation_to_table_screen_gui, text = "Next", command=lambda: check_in_reservation_assign_reservation_to_table_screen_next_button_command(reservations, tables, selected_reservation, int(check_in_reservation_assign_reservation_to_table_screen_table_choice_variable.get())))
     check_in_reservation_assign_reservation_to_table_screen_next_button.grid(row = 3, column = 1)
     
-    # open and resize photo2
-    resize_photo2 = Image.open("./Restaurant_Table_For_Check_In_Reservation_Assign_Reservation_to_Table_Screen.png").resize(480,480)
+    # open and resize photo2 for Check-In Reservation Assign Reservation to Title screen
+    photo2 = Image.open("./Restaurant_Table_For_Check_In_Reservation_Assign_Reservation_to_Table_Screen.png").resize((480,480)) # when resizing an image, pass the pixel dimensions of the resized image as a tuple
     
-     # create photo 2 for Check-In Reservation Assign Reservation to Title screen
-    photo2 = ImageTk.PhotoImage(file=resize_photo2) # using ImageTK just in case
-    photo2_label = ttk.Label(check_in_reservation_assign_reservation_to_table_screen_gui, image=photo2, padding=5)
+    # put the photo2 in PhotoImage so it can fit in a label
+    resized_photo2 = ImageTk.PhotoImage(image=photo2)
+    
+    # make photo2 label to store image in
+    photo2_label = ttk.Label(check_in_reservation_assign_reservation_to_table_screen_gui, image=resized_photo2, padding=5)
     photo2_label.grid(row = 4, column = 0)
     
     # initialize infinite loop that keeps Check-In Reservation Assign Reservation to Table Screen on
@@ -400,15 +402,23 @@ def check_in_reservation_assign_reservation_to_table_screen(reservations: list[r
     return
 
 def check_in_reservation_assign_reservation_to_table_screen_next_button_command(reservations: list[reservationType], tables: list[tableType], selected_reservation: reservationType, table_choice: int) -> None:
-    """ basically, if table number equals table choice, copy over the information from selected reservation to that 
-        table's reservation except for ensuring that that table's checkInReservation variable is true.
+    """ Basically, if table number equals table choice, copy over the information from selected reservation to that 
+        table's reservation except for ensuring that that table's checkInReservation variable is true. 
+        It also checks the reservations list afterwards to find where it matches with selected reservation and deletes that reservation from the reservations list.
+        This is to avoid binding the same reservation to multiple tables. 
     """
+    n: int = 0
+    
     for l in tables:
         if l.tableNumber == table_choice: 
             l.reservation.checkInReservation = True
             l.reservation.customerName = selected_reservation.customerName
             l.reservation.time = selected_reservation.time
-            l.reservation.numberOfPeople = selected_reservation.numberOfPeople 
+            l.reservation.numberOfPeople = selected_reservation.numberOfPeople
+            for m in reservations:
+                if m.customerName == selected_reservation.customerName and m.numberOfPeople == selected_reservation.numberOfPeople and m.time == selected_reservation.time and m.checkInReservation == selected_reservation.checkInReservation:
+                    reservations.pop(n)
+                n += 1
             welcome_screen(reservations, tables)
 
     return 
@@ -420,13 +430,13 @@ if __name__ == "__main__":
     Then we begin the welcome_screen function for the user.
 """
     # create 20 numbered tables from 1 to 20 that at most 10 people can sit at each table
-    tables: tableType = [tableType(0, 10, 0, 1, False), tableType(0, 10, 0, 2, False), tableType(0, 10, 0, 3, False),
-                         tableType(0, 10, 0, 4, False), tableType(0, 10, 0, 5, False), tableType(0, 10, 0, 6, False),
-                         tableType(0, 10, 0, 7, False), tableType(0, 10, 0, 8, False), tableType(0, 10, 0, 9, False),
-                         tableType(0, 10, 0, 10, False), tableType(0, 10, 0, 11, False), tableType(0, 10, 0, 12, False),
-                         tableType(0, 10, 0, 13, False), tableType(0, 10, 0, 14, False), tableType(0, 10, 0, 15, False),
-                         tableType(0, 10, 0, 16, False), tableType(0, 10, 0, 17, False), tableType(0, 10, 0, 18, False),
-                         tableType(0, 10, 0, 19, False), tableType(0, 10, 0, 20, False)
+    tables: list[tableType] = [tableType(reservationType("", "", 0, False), 10, 0, 1, False), tableType(reservationType("", "", 0, False), 10, 0, 2, False), tableType(reservationType("", "", 0, False), 10, 0, 3, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 4, False), tableType(reservationType("", "", 0, False), 10, 0, 5, False), tableType(reservationType("", "", 0, False), 10, 0, 6, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 7, False), tableType(reservationType("", "", 0, False), 10, 0, 8, False), tableType(reservationType("", "", 0, False), 10, 0, 9, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 10, False), tableType(reservationType("", "", 0, False), 10, 0, 11, False), tableType(reservationType("", "", 0, False), 10, 0, 12, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 13, False), tableType(reservationType("", "", 0, False), 10, 0, 14, False), tableType(reservationType("", "", 0, False), 10, 0, 15, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 16, False), tableType(reservationType("", "", 0, False), 10, 0, 17, False), tableType(reservationType("", "", 0, False), 10, 0, 18, False),
+                         tableType(reservationType("", "", 0, False), 10, 0, 19, False), tableType(reservationType("", "", 0, False), 10, 0, 20, False)
                          ] 
     reservations: reservationType = []
     
