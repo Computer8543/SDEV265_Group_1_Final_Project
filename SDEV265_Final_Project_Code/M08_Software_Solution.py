@@ -82,32 +82,46 @@ def welcome_screen(reservations: list[reservationType], tables: list[tableType])
     welcome_screen_gui.mainloop()
     
     return 
-def verify_number_of_people_in_the_party_input_field_in_make_reservation(number_of_people_in_the_party_integer: tk.IntVar) -> bool:
-    """ This function verifies that the number of people in the party input field in make reseration 
-        has a number between 1 and 10 in it. It returns False if text or a float number
-        was entered into the field, and returns False if a number was entered into the field 
-        but it was not between 1 and 10. If neither of those cases are true, then it returns True.
-    """
-    if number_of_people_in_the_party_integer.get() == 0:
-        return True
-    elif type(number_of_people_in_the_party_integer.get()) == int:
-        return True
-    elif number_of_people_in_the_party_integer.get() < 1 or number_of_people_in_the_party_integer.get() > 10:
-        return True
-    else:
-        return True
-def when_invalid() -> None:
-    """When the input is invalid, a message is displayed to the user stating that the input is wrong and
-       that they should reenter it. 
-    """
-    when_invalid_gui = tk.Toplevel()
-    when_invalid_gui.title("Error Message")
-    when_invalid_gui.geometry("480x480")
-    when_invalid_gui.resizable(0,0)
-    when_invalid_error_message_text = ttk.Label(when_invalid_gui, text='The inputted value you entered was either not a number, or was not between 1 and 10. Put the number of people in the party in numerical form.', font=("Times New Roman", 12) )
-    when_invalid_error_message_text.pack()
-    when_invalid_gui.mainloop()
+
+"""
+    # These are the old functions to verify the number of people in the party input field in make_reservation function.
+    # I would note that trying to implement these caused various widgets to disappear and we lacked the time to solve that issue.
+    # Thus the code is commented out to avoid accidentally calling it or running it. 
     
+    def verify_number_of_people_in_the_party_input_field_in_make_reservation(number_of_people_in_the_party_integer: tk.IntVar) -> bool:
+        """
+"""
+            This function verifies that the number of people in the party input field in make reseration 
+            has a number between 1 and 10 in it. It returns False if text or a float number
+            was entered into the field, and returns False if a number was entered into the field 
+            but it was not between 1 and 10. If neither of those cases are true, then it returns True.
+        """
+"""
+        if number_of_people_in_the_party_integer.get() == 0:
+            return True
+        elif type(number_of_people_in_the_party_integer.get()) == int:
+            return True
+        elif number_of_people_in_the_party_integer.get() < 1 or number_of_people_in_the_party_integer.get() > 10:
+            return True
+        else:
+            return True
+        """
+"""
+    def when_invalid() -> None:
+"""
+"""     When the input is invalid, a message is displayed to the user stating that the input is wrong and
+        that they should reenter it. 
+        """
+"""
+        when_invalid_gui = tk.Toplevel()
+        when_invalid_gui.title("Error Message")
+        when_invalid_gui.geometry("480x480")
+        when_invalid_gui.resizable(0,0)
+        when_invalid_error_message_text = ttk.Label(when_invalid_gui, text='The inputted value you entered was either not a number, or was not between 1 and 10. Put the number of people in the party in numerical form.', font=("Times New Roman", 12) )
+        when_invalid_error_message_text.pack()
+        when_invalid_gui.mainloop()
+        
+"""
 def make_reservation(reservations: list[reservationType], tables: list[tableType]) -> None:
     """ make_reservation is the first in a series of functions for the Make Reservation choice 
         on the Welcome Screen Menu. The user enters a name for the reservation, enters the number
@@ -115,8 +129,8 @@ def make_reservation(reservations: list[reservationType], tables: list[tableType
         HH::MM AM/PM. After that, the user clicks Next to go to the confirm_reservation function/page.
 
     Args:
-        reservations (reservationType): A list of reservationType
-        tables (tableType): A list of tableType
+        reservations (list[reservationType]): A list of reservationType
+        tables (list[tableType]): A list of tableType
     """
     
     # close welcome screen 
@@ -169,7 +183,8 @@ def make_reservation(reservations: list[reservationType], tables: list[tableType
         validate_command = (ver, '%P')
         invalid_command = (inv)
     """   
-   
+    
+    # make the number of people in the party label for the user
     make_reservation_number_of_people_in_the_party_label = ttk.Label(make_reservation_gui, text='Enter the number of people in the party (between 1 and 10 people) in numerical form:', font=("Times New Roman", 12))
     make_reservation_number_of_people_in_the_party_label.grid(row = 2, column = 0)
     
@@ -181,9 +196,10 @@ def make_reservation(reservations: list[reservationType], tables: list[tableType
     
     make_reservation_number_of_people_in_the_party_input_field = tk.Entry(make_reservation_number_of_people_in_the_party_input_window, font=('times new roman', 12, 'bold'), textvariable=number_of_people_in_the_party_integer, width=50, bg="#eee", bd=2, justify='left')
     make_reservation_number_of_people_in_the_party_input_field.pack()
-    """ make_reservation_number_of_people_in_the_party_input_field.config(validate="focus", validatecommand=validate_command, invalidcommand=invalid_command)
+    """ 
+        # Below is more validation code I didn't end up implementing:
+        make_reservation_number_of_people_in_the_party_input_field.config(validate="focus", validatecommand=validate_command, invalidcommand=invalid_command)
     """
-    # make number of people in the party label for the user's sake
    
     # make time label for the user's sake
     make_reservation_time_label = ttk.Label(make_reservation_gui, text='Enter the time for the reservation in HH::MM AM/PM:', font=("Times New Roman", 12)) 
@@ -207,7 +223,17 @@ def make_reservation(reservations: list[reservationType], tables: list[tableType
     
     return
 
-def make_reservation_bind_tkinter_variables_to_newReservation(reservations: reservationType, tables: tableType, customer_name: str, number_of_people_in_the_party: int, time_for_the_reservation: str) -> None:
+def make_reservation_bind_tkinter_variables_to_newReservation(reservations: list[reservationType], tables: list[tableType], customer_name: str, number_of_people_in_the_party: int, time_for_the_reservation: str) -> None:
+    """ When the user decides to click the next button in Make Reservation Screen, it takes the reservations and tables lists, as well as the .get() for the 3 previous entry boxes
+        And puts them into new_reservation to be passed along to Confirm Reservation Screen.
+
+    Args:
+        reservations (list[reservationType]): the list of reservations that are not checked-in
+        tables (list[tableType]): the list of tables that are avalible
+        customer_name (str): The customer's name as a string
+        number_of_people_in_the_party (int): The number of people in the party as an integer
+        time_for_the_reservation (str): The reservation time as a string
+    """
     # add reservation dataclass to store data from tkinter variables
     
     new_reservation = reservationType(customer_name, time_for_the_reservation, number_of_people_in_the_party, False)
@@ -224,7 +250,8 @@ def confirm_reservation(new_reservation: reservationType, reservations: list[res
         
     Args:
         new_reservation (reservationType): The reservation made in the previous screen.
-        tables (tableType): the list of tables that are avalible 
+        reservations (list[reservationType]): the list of reservations that are not checked-in
+        tables (list[tableType]): the list of tables that are avalible 
     """
     # set up Confirm Reservation screen
     confirm_reservation_gui = tk.Toplevel()
@@ -273,8 +300,8 @@ def confirm_reservation(new_reservation: reservationType, reservations: list[res
     confirm_reservation_gui.mainloop()
     
 def confirm_reservation_yes_option(new_reservation: reservationType, reservations: list[reservationType], tables: list[tableType]) -> None:
-    """ This function activates when the user presses the Yes button in Confirm Reservation Screen. It saves new_reservation to reservations,
-        and then passes those arguments back to the Welcome Screen. 
+    """ This function activates when the user presses the Yes button in Confirm Reservation Screen. It appends new_reservation to the reservations list,
+        and then passes the reservations and tables lists back to the Welcome Screen. 
 
     Args:
         new_reservation (reservationType): The reservation the customer is currently entering
@@ -292,6 +319,13 @@ def confirm_reservation_yes_option(new_reservation: reservationType, reservation
     return 
 
 def confirm_reservation_cancel_option(reservations: list[reservationType], tables: list[tableType]) -> None:
+    """ If the user decides to cancel their reservation, it returns them to Welcome Screen without making any
+        changes in the reservations or tables lists.
+
+    Args:
+        reservations (list[reservationType]): The list of reservations not checked-in
+        tables (list[tableType]): The list of all tables
+    """
     
     # return to welcome screen with no reservation added to reservations list
     welcome_screen(reservations, tables)
@@ -299,11 +333,27 @@ def confirm_reservation_cancel_option(reservations: list[reservationType], table
     return 
 
 def confirm_reservation_no_option(reservations: list[reservationType], tables: list[tableType]) -> None:
+    """ If the user decides to say that they are not satisfied with the reservation, they are returned to Make Reservation
+        Screen without saving anything to reservations or tables lists to redo their reservation.
+
+    Args:
+        reservations (list[reservationType]): The list of reservations not checked-in
+        tables (list[tableType]): The list of all tables
+    """
     # return to Make Reservation Screen to make new reservation
     make_reservation(reservations, tables)
     
     return 
 def check_in_reservation(reservations: list[reservationType], tables: list[tableType]) -> None:
+    """ This function is chosen directly from Welcome Screen, and is the second step the user will do after Make Reservation.
+        Check-In Reservation Screen tells the user to check in a reservation from a drop down menu. 
+        After they are done, they will click the next button, which will bring them to check_in_reservation_next_button_command function,
+        which runs in the background and then brings them to check_in_reservation_assign_reservation_to_table_screen.
+
+    Args:
+        reservations (list[reservationType]): The list of reservations pending
+        tables (list[tableType]): The list of all tables 
+    """
     # initialize Check-In Reservation Screen
     check_in_reservation_gui = tk.Toplevel()
     check_in_reservation_gui.title("Check-In Reservation Screen")
@@ -318,8 +368,6 @@ def check_in_reservation(reservations: list[reservationType], tables: list[table
     check_in_reservation_choose_the_reservation_to_check_in_label = ttk.Label(check_in_reservation_gui, text='Choose the reservation to check-in:', font=("Times New Roman", 12))
     check_in_reservation_choose_the_reservation_to_check_in_label.grid(row = 1, column = 0)
     
-   
-    
     # Initialize Check-In Reservation Screen reservation choice variable
     check_in_reservation_reservation_choice_variable = tk.StringVar(check_in_reservation_gui)
      
@@ -327,7 +375,7 @@ def check_in_reservation(reservations: list[reservationType], tables: list[table
     check_in_reservation_reservation_options = []
     
     # basically, if the reservation isn't checked-in, append the customer name to the reservation options list
-    for i in reservations:
+    for i in reservations: # i is used to iterate across reservations in this function
         if i.checkInReservation == False: 
             check_in_reservation_reservation_options.append(i.customerName)
     
@@ -344,16 +392,27 @@ def check_in_reservation(reservations: list[reservationType], tables: list[table
     return
 
 def check_in_reservation_next_button_command(reservations: list[reservationType], tables: list[tableType], selected_option: str) -> None:
+    """ When the next button in Check-In Reservation Screen is pressed, a empty reservation is created and the selected option
+        is compared against each reservation in reservations. If the reservation in reservations isn't checked in and the customer name for that
+        reservation equals the selected option, then the blank reservation is assigned to the reservation in reservations and we head to the Check-In Reservation 
+        Assign Reservation to Table Screen.
+    """
     # initialize selected_reservation variable
     selected_reservation: reservationType = reservationType("", "", 0, False)
     
     # basically, if the reservation isn't checked-in, append the customer name to the reservation options list
-    for j in reservations:
+    for j in reservations: # j is used to iterate across reservations in this function
         if j.checkInReservation == False and j.customerName == selected_option: 
             selected_reservation = j
             check_in_reservation_assign_reservation_to_table_screen(reservations, tables, selected_reservation)
 
+    return 
+
 def check_in_reservation_assign_reservation_to_table_screen(reservations: list[reservationType], tables: list[tableType], selected_reservation: reservationType) -> None:
+    """ We assign a available table to the reservation in this screen through a drop down menu, 
+        and when the user is done they click the next button. This also shows an image of multiple tables in a row (2nd image in this program) 
+        to fulfill assignment requirements.
+    """
     # initialize Check-In Reservation Assign Reservation to Table Screen
     check_in_reservation_assign_reservation_to_table_screen_gui = tk.Toplevel()
     check_in_reservation_assign_reservation_to_table_screen_gui.title("Check-In Reservation Assign Reservation to Table Screen")
@@ -375,7 +434,7 @@ def check_in_reservation_assign_reservation_to_table_screen(reservations: list[r
     check_in_reservation_assign_reservation_to_table_screen_table_options = []
     
     # basically, if there are no reservation checked-in to the table, append the table number to the table options list
-    for k in tables:
+    for k in tables: # k serves to iterate through tables in this function
         if k.reservation.checkInReservation == False: 
             check_in_reservation_assign_reservation_to_table_screen_table_options.append(str(k.tableNumber))
     
@@ -402,20 +461,21 @@ def check_in_reservation_assign_reservation_to_table_screen(reservations: list[r
     return
 
 def check_in_reservation_assign_reservation_to_table_screen_next_button_command(reservations: list[reservationType], tables: list[tableType], selected_reservation: reservationType, table_choice: int) -> None:
-    """ Basically, if table number equals table choice, copy over the information from selected reservation to that 
+    """ Basically, when the next button in Check-In Reservation Assign Reservation to Table Screen is pressed,
+        if table number equals table choice, copy over the information from selected reservation to that 
         table's reservation except for ensuring that that table's checkInReservation variable is true. 
         It also checks the reservations list afterwards to find where it matches with selected reservation and deletes that reservation from the reservations list.
         This is to avoid binding the same reservation to multiple tables. 
     """
-    n: int = 0
+    n: int = 0 # serves as a counter variable to determine the index of m while in the loop
     
-    for l in tables:
+    for l in tables: # l serves to iterate through tables in this function
         if l.tableNumber == table_choice: 
             l.reservation.checkInReservation = True
             l.reservation.customerName = selected_reservation.customerName
             l.reservation.time = selected_reservation.time
             l.reservation.numberOfPeople = selected_reservation.numberOfPeople
-            for m in reservations:
+            for m in reservations: # m serves to iterate through reservations in this function
                 if m.customerName == selected_reservation.customerName and m.numberOfPeople == selected_reservation.numberOfPeople and m.time == selected_reservation.time and m.checkInReservation == selected_reservation.checkInReservation:
                     reservations.pop(n)
                 n += 1
@@ -426,9 +486,11 @@ def check_in_reservation_assign_reservation_to_table_screen_next_button_command(
 if __name__ == "__main__": 
     
     """ We intitalize the two main lists of dataclasses here, reservations for the list of 
-    reservation dataclasses, and tables for the list of table dataclasses. 
+    reservation dataclasses, and tables for the list of table dataclasses.
+    We also initialize the root screen and make it visible to the user so that the user
+    can completely close the application by exiting out of the root window. 
     Then we begin the welcome_screen function for the user.
-"""
+    """
     # create 20 numbered tables from 1 to 20 that at most 10 people can sit at each table
     tables: list[tableType] = [tableType(reservationType("", "", 0, False), 10, 0, 1, False), tableType(reservationType("", "", 0, False), 10, 0, 2, False), tableType(reservationType("", "", 0, False), 10, 0, 3, False),
                          tableType(reservationType("", "", 0, False), 10, 0, 4, False), tableType(reservationType("", "", 0, False), 10, 0, 5, False), tableType(reservationType("", "", 0, False), 10, 0, 6, False),
@@ -438,15 +500,17 @@ if __name__ == "__main__":
                          tableType(reservationType("", "", 0, False), 10, 0, 16, False), tableType(reservationType("", "", 0, False), 10, 0, 17, False), tableType(reservationType("", "", 0, False), 10, 0, 18, False),
                          tableType(reservationType("", "", 0, False), 10, 0, 19, False), tableType(reservationType("", "", 0, False), 10, 0, 20, False)
                          ] 
+    # create empty list for reservations
     reservations: reservationType = []
     
-    # set up root window to be top level window
+    # set up root window to be top level window and keep it visible so the user can close the application completely
+    # without having to use task manager
     root = tk.Tk()
     root.title("Root Window")
     root.geometry("480x100")
     root_label = ttk.Label(root, text='Do not close this window unless you want to close the application.', font=("Times New Roman", 12))
     root_label.pack()
-    root.withdraw()
+    
     
     # open Welcome Screen 
     welcome_screen(reservations, tables)
